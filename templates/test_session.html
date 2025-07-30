@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block title %}Session Management Test{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card bg-dark border-warning">
+                <div class="card-header bg-warning text-dark">
+                    <h4 class="card-title mb-0">
+                        <i class="fas fa-cogs me-2"></i>Session Management Test (Admin Only)
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <!-- Configuration Display -->
+                    <div class="row mb-4">
+                        <div class="col-md-6">
+                            <h5 class="text-warning">SSH Configuration</h5>
+                            <div class="bg-secondary p-3 rounded">
+                                <p class="mb-1"><strong>Server:</strong> {{ rdp_config.server }}</p>
+                                <p class="mb-1"><strong>Admin User:</strong> {{ ssh_config.win_admin_ssh_username }}</p>
+                                <p class="mb-0"><strong>Remote User:</strong> {{ ssh_config.win_remote_user }}</p>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="text-warning">Current RDP Password</h5>
+                            <div class="bg-secondary p-3 rounded">
+                                <code class="text-light">{{ rdp_config.password }}</code>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Test Actions -->
+                    <div class="row">
+                        <div class="col-12">
+                            <h5 class="text-warning mb-3">Test Actions</h5>
+                            <form method="POST" class="d-inline-block">
+                                <input type="hidden" name="action" value="start">
+                                <button type="submit" class="btn btn-success me-2 mb-2">
+                                    <i class="fas fa-play me-2"></i>Start Session (Generate Password)
+                                </button>
+                            </form>
+                            
+                            <form method="POST" class="d-inline-block">
+                                <input type="hidden" name="action" value="end">
+                                <button type="submit" class="btn btn-danger me-2 mb-2">
+                                    <i class="fas fa-stop me-2"></i>End Session (Logoff User)
+                                </button>
+                            </form>
+                            
+                            <form method="POST" class="d-inline-block">
+                                <input type="hidden" name="action" value="sessions">
+                                <button type="submit" class="btn btn-info me-2 mb-2">
+                                    <i class="fas fa-list me-2"></i>Get User Sessions
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+
+                    <!-- Warning -->
+                    <div class="alert alert-warning mt-4" role="alert">
+                        <i class="fas fa-exclamation-triangle me-2"></i>
+                        <strong>Warning:</strong> These actions will directly modify the Windows user password and sessions. 
+                        Use only for testing purposes.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-4">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-outline-light">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

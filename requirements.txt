@@ -5,3 +5,5 @@ WTForms[email]
 werkzeug
 gunicorn
 toml
+paramiko
+pytz
