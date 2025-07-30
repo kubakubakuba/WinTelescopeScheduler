@@ -1,0 +1,212 @@
+{% extends "base.html" %}
+
+{% block title %}Telescope Scheduler - Remote Desktop{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-lg-10">
+            <div class="card bg-dark border-success">
+                <div class="card-header bg-success text-white">
+                    <h4 class="card-title mb-0">
+                        <i class="fas fa-desktop me-2"></i>Telescope Remote Desktop Access
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <div class="row mb-4">
+                        <div class="col-md-12">
+                            <h5 class="text-success">Connection Details</h5>
+                            <div class="bg-secondary p-3 rounded">
+                                <p class="mb-1"><strong>Server:</strong> {{ rdp_config.server }}</p>
+                                <p class="mb-1"><strong>Port:</strong> {{ rdp_config.port }}</p>
+                                <p class="mb-1"><strong>Username:</strong> 
+                                    <code class="bg-dark p-1 rounded">{{ rdp_config.username }}</code>
+                                    <button class="btn btn-sm btn-outline-light ms-2" onclick="copyToClipboard('{{ rdp_config.username }}')" title="Copy username">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </p>
+                                <p class="mb-0"><strong>Password:</strong> 
+                                    <code class="bg-dark p-1 rounded">{{ rdp_config.password }}</code>
+                                    <button class="btn btn-sm btn-outline-light ms-2" onclick="copyToClipboard('{{ rdp_config.password }}')" title="Copy password">
+                                        <i class="fas fa-copy"></i>
+                                    </button>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Web-based RDP Client iframe placeholder -->
+                    <div class="row">
+                        <div class="col-12">
+                            <h5 class="text-success mb-3">Remote Desktop Connection</h5>
+                            <div class="border border-secondary rounded p-4 bg-secondary">
+                                <div id="rdp-container" class="position-relative" style="min-height: 400px;">
+                                    <div class="d-flex flex-column justify-content-center align-items-center h-100 py-4">
+                                        <i class="fas fa-desktop fa-4x text-success mb-3"></i>
+                                        <h5 class="text-light mb-3">Connect to Telescope</h5>
+                                        <p class="text-muted text-center mb-4">
+                                            Use the connection details above to connect via your Remote Desktop client.
+                                        </p>
+                                        
+                                        <div class="d-grid gap-2 w-100" style="max-width: 400px;">
+                                            <button class="btn btn-success btn-lg" onclick="connectDirectRDP()">
+                                                <i class="fas fa-download me-2"></i>Download RDP File
+                                            </button>
+                                            
+                                            <div class="mt-3">
+                                                <h6 class="text-light">Manual Connection Instructions:</h6>
+                                                <div class="bg-dark p-3 rounded text-start">
+                                                    <small class="text-muted">
+                                                        <strong>Windows:</strong> Run "mstsc" → Enter server address<br>
+                                                        <strong>Mac:</strong> Use Microsoft Remote Desktop app<br>
+                                                        <strong>Linux:</strong> Use Remmina or rdesktop
+                                                    </small>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="mt-3">
+                                <small class="text-muted">
+                                    <i class="fas fa-info-circle me-1"></i>
+                                    This interface provides connection details for accessing the telescope control computer.
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="text-center mt-4">
+                <a href="{{ url_for('dashboard') }}" class="btn btn-outline-light">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Dashboard
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(function() {
+        // Create a temporary success indicator
+        const buttons = document.querySelectorAll('button[onclick*="' + text + '"]');
+        buttons.forEach(button => {
+            const originalContent = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check text-success"></i>';
+            button.disabled = true;
+            
+            setTimeout(() => {
+                button.innerHTML = originalContent;
+                button.disabled = false;
+            }, 1500);
+        });
+    }, function(err) {
+        console.error('Could not copy text: ', err);
+        alert('Failed to copy to clipboard');
+    });
+}
+
+function connectDirectRDP() {
+    // Generate RDP file content
+    const rdpContent = generateRDPFile();
+    
+    // Create a blob and download link
+    const blob = new Blob([rdpContent], { type: 'application/rdp' });
+    const url = window.URL.createObjectURL(blob);
+    
+    // Create temporary download link
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'telescope.rdp';
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    
+    // Trigger download
+    link.click();
+    
+    // Clean up
+    document.body.removeChild(link);
+    window.URL.revokeObjectURL(url);
+    
+    // Show success message
+    const container = document.getElementById('rdp-container');
+    container.innerHTML = `
+        <div class="d-flex flex-column justify-content-center align-items-center h-100 py-4">
+            <i class="fas fa-download fa-4x text-success mb-3"></i>
+            <h5 class="text-success">RDP File Downloaded</h5>
+            <p class="text-muted text-center">
+                The telescope.rdp file has been downloaded.<br>
+                Double-click it to open your Remote Desktop client.
+            </p>
+            <div class="bg-dark p-3 rounded mb-3">
+                <div class="text-center">
+                    <div class="mb-2"><strong>Server:</strong> {{ rdp_config.server }}:{{ rdp_config.port }}</div>
+                    <div class="mb-2"><strong>Username:</strong> {{ rdp_config.username }}</div>
+                    <div><strong>Password:</strong> {{ rdp_config.password }}</div>
+                </div>
+            </div>
+            <button class="btn btn-outline-light mt-3" onclick="location.reload()">
+                <i class="fas fa-redo me-2"></i>Download Again
+            </button>
+        </div>
+    `;
+}
+
+function generateRDPFile() {
+    const server = '{{ rdp_config.server }}';
+    const port = '{{ rdp_config.port }}';
+    const username = '{{ rdp_config.username }}';
+    const fullAddress = port === '3389' ? server : `${server}:${port}`;
+    
+    return `screen mode id:i:2
+use multimon:i:0
+desktopwidth:i:{{ rdp_config.desktop_width }}
+desktopheight:i:{{ rdp_config.desktop_height }}
+session bpp:i:{{ rdp_config.color_depth }}
+winposstr:s:0,3,0,0,800,600
+compression:i:1
+keyboardhook:i:2
+audiocapturemode:i:0
+videoplaybackmode:i:1
+connection type:i:7
+networkautodetect:i:1
+bandwidthautodetect:i:1
+displayconnectionbar:i:1
+enableworkspacereconnect:i:0
+disable wallpaper:i:0
+allow font smoothing:i:0
+allow desktop composition:i:0
+disable full window drag:i:1
+disable menu anims:i:1
+disable themes:i:0
+disable cursor setting:i:0
+bitmapcachepersistenable:i:1
+full address:s:${fullAddress}
+audiomode:i:{{ 0 if rdp_config.enable_audio else 2 }}
+redirectprinters:i:{{ 1 if rdp_config.enable_printers else 0 }}
+redirectcomports:i:0
+redirectsmartcards:i:1
+redirectclipboard:i:{{ 1 if rdp_config.enable_clipboard else 0 }}
+redirectposdevices:i:0
+autoreconnection enabled:i:1
+authentication level:i:2
+prompt for credentials:i:0
+negotiate security layer:i:1
+remoteapplicationmode:i:0
+alternate shell:s:
+shell working directory:s:
+gatewayhostname:s:
+gatewayusagemethod:i:4
+gatewaycredentialssource:i:4
+gatewayprofileusagemethod:i:0
+promptcredentialonce:i:0
+gatewaybrokeringtype:i:0
+use redirection server name:i:0
+rdgiskdcproxy:i:0
+kdcproxyname:s:
+username:s:${username}`;
+}
+</script>
+{% endblock %}

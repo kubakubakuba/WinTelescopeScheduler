@@ -1,0 +1,218 @@
+{% extends "base.html" %}
+
+{% block title %}Telescope Scheduler - Dashboard{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row">
+        <div class="col-12">
+            <h1 class="mb-4">Welcome, {{ name }}!</h1>
+        </div>
+    </div>
+    
+    <!-- Current Active Session Panel -->
+    {% if current_reservation %}
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card bg-success border-success">
+                <div class="card-header bg-success text-white">
+                    <h4 class="card-title mb-0">
+                        <i class="fas fa-telescope me-2"></i>Your Current Observation Session
+                    </h4>
+                </div>
+                <div class="card-body bg-dark text-white">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <h5 class="text-success">Session Details</h5>
+                            <p><strong>Date:</strong> {{ current_reservation.date }}</p>
+                            <p><strong>Time:</strong> 
+                                {% if current_reservation.end_date and current_reservation.end_date != current_reservation.date %}
+                                    {{ current_reservation.start_time }} ({{ current_reservation.date }}) - {{ current_reservation.end_time }} ({{ current_reservation.end_date }})
+                                {% else %}
+                                    {{ current_reservation.start_time }} - {{ current_reservation.end_time }}
+                                {% endif %}
+                            </p>
+                            <p><strong>Purpose:</strong> {{ current_reservation.purpose or 'No purpose specified' }}</p>
+                            <div class="mt-3 p-3 bg-dark rounded border border-warning">
+                                <h6 class="text-warning mb-2">
+                                    <i class="fas fa-clock me-2"></i>Time Remaining
+                                </h6>
+                                <div id="countdown" class="fs-3 text-warning fw-bold text-center">
+                                    {% if time_remaining %}
+                                        Loading...
+                                    {% else %}
+                                        <span class="text-danger">Session Ended</span>
+                                    {% endif %}
+                                </div>
+                                <div class="text-center mt-2">
+                                    <small class="text-muted">HH:MM:SS</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <h5 class="text-success">Telescope Access</h5>
+                            <div class="bg-secondary p-3 rounded mb-3">
+                                <div class="mb-2">
+                                    <div class="d-flex align-items-center mb-2">
+                                        <span class="me-2"><strong>Server:</strong></span>
+                                        <code class="bg-dark p-2 rounded me-2 flex-grow-1">{{ telescope_access.server }}</code>
+                                        <button class="btn btn-sm btn-outline-light" onclick="copyToClipboard('{{ telescope_access.server }}')" title="Copy server address">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                    </div>
+                                    <div class="d-flex align-items-center mb-2">
+                                        <span class="me-2"><strong>Username:</strong></span>
+                                        <code class="bg-dark p-2 rounded me-2 flex-grow-1">{{ telescope_access.username }}</code>
+                                        <button class="btn btn-sm btn-outline-light" onclick="copyToClipboard('{{ telescope_access.username }}')" title="Copy username">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                    </div>
+                                    <div class="d-flex align-items-center mb-2">
+                                        <span class="me-2"><strong>Password:</strong></span>
+                                        <code class="bg-dark p-2 rounded me-2 flex-grow-1">{{ telescope_access.password }}</code>
+                                        <button class="btn btn-sm btn-outline-light" onclick="copyToClipboard('{{ telescope_access.password }}')" title="Copy password">
+                                            <i class="fas fa-copy"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="bg-info bg-opacity-10 border border-info rounded p-3">
+                                <h6 class="text-info mb-2">
+                                    <i class="fas fa-info-circle me-2"></i>Connection Instructions
+                                </h6>
+                                <small class="text-white">
+                                    <strong>Windows:</strong> Open Remote Desktop / Windows app → Enter server address<br>
+                                    <strong>Mac:</strong> Use Microsoft Remote Desktop app<br>
+                                    <strong>Linux:</strong> Use Remmina or rdesktop
+                                </small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <div class="row">
+        <div class="col-md-8">
+            <div class="card bg-secondary mb-4">
+                <div class="card-header">
+                    <h4>Current Reservations</h4>
+                </div>
+                <div class="card-body">
+                    {% if reservations %}
+                        <div class="table-responsive">
+                            <table class="table table-dark table-striped">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Time</th>
+                                        <th>User</th>
+                                        <th>Purpose</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {% for reservation in reservations %}
+                                    <tr>
+                                        <td>{{ reservation.date }}</td>
+                                        <td>{{ reservation.time_display }}</td>
+                                        <td>{{ reservation.username }}</td>
+                                        <td>{{ reservation.purpose }}</td>
+                                    </tr>
+                                    {% endfor %}
+                                </tbody>
+                            </table>
+                        </div>
+                    {% else %}
+                        <p class="text-light">No current reservations.</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card bg-secondary mb-4">
+                <div class="card-header">
+                    <h5>Default Reservation Slot</h5>
+                </div>
+                <div class="card-body">
+                    <p class="text-light">
+                        <strong>Start:</strong> {{ slot_info.start_time }}<br>
+                        <strong>End:</strong> {{ slot_info.end_time }} (next day)
+                    </p>
+                    <p class="text-muted">
+                        Regular users get this time slot when making reservations.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+function copyToClipboard(text) {
+    navigator.clipboard.writeText(text).then(function() {
+        // Create a temporary success indicator
+        const buttons = document.querySelectorAll('button[onclick*="' + text + '"]');
+        buttons.forEach(button => {
+            const originalContent = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check text-success"></i>';
+            button.disabled = true;
+            
+            setTimeout(() => {
+                button.innerHTML = originalContent;
+                button.disabled = false;
+            }, 1500);
+        });
+    }, function(err) {
+        console.error('Could not copy text: ', err);
+        alert('Failed to copy to clipboard');
+    });
+}
+
+{% if current_reservation and time_remaining %}
+// Countdown timer for observation session
+let endTime = new Date();
+{% if current_reservation.end_date and current_reservation.end_date != current_reservation.date %}
+endTime = new Date('{{ current_reservation.end_date }}T{{ current_reservation.end_time }}:00');
+{% else %}
+// Handle same day or next day logic
+let endDate = '{{ current_reservation.date }}';
+let endTimeStr = '{{ current_reservation.end_time }}';
+let startTimeStr = '{{ current_reservation.start_time }}';
+
+// If end time is earlier than start time, it's next day
+if (endTimeStr < startTimeStr) {
+    let nextDay = new Date('{{ current_reservation.date }}');
+    nextDay.setDate(nextDay.getDate() + 1);
+    endDate = nextDay.toISOString().split('T')[0];
+}
+endTime = new Date(endDate + 'T' + endTimeStr + ':00');
+{% endif %}
+
+function updateCountdown() {
+    const now = new Date();
+    const timeLeft = endTime - now;
+    
+    if (timeLeft <= 0) {
+        document.getElementById('countdown').innerHTML = '<span class="text-danger">Session Ended</span>';
+        return;
+    }
+    
+    const hours = Math.floor(timeLeft / (1000 * 60 * 60));
+    const minutes = Math.floor((timeLeft % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds = Math.floor((timeLeft % (1000 * 60)) / 1000);
+    
+    const formatTime = (num) => String(num).padStart(2, '0');
+    
+    document.getElementById('countdown').innerHTML = 
+        `${formatTime(hours)}:${formatTime(minutes)}:${formatTime(seconds)}`;
+}
+
+// Update countdown every second
+updateCountdown();
+setInterval(updateCountdown, 1000);
+{% endif %}
+</script>
+{% endblock %}

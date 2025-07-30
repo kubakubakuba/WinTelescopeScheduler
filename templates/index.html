@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+
+{% block title %}Telescope Scheduler - Home{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <h1 class="display-4 mb-4">Telescope Scheduler</h1>
+            <p class="lead mb-4">Reserve your telescope observation time</p>
+            
+            <div class="row justify-content-center">
+                <div class="col-md-8 mb-3">
+                    <div class="card bg-secondary">
+                        <div class="card-body text-center">
+                            <h5 class="card-title">Login to Access Telescope</h5>
+                            <p class="card-text">Access your account to view available time slots and manage reservations</p>
+                            <a href="{{ url_for('login') }}" class="btn btn-primary btn-lg">Login</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="alert alert-info mt-4">
+                <h6><i class="fas fa-info-circle"></i> Need an Account?</h6>
+                <p class="mb-0">Contact your telescope administrator to request access. Only administrators can create new user accounts.</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,7 @@
+Flask
+Flask-Login
+Flask-WTF
+WTForms[email]
+werkzeug
+gunicorn
+toml

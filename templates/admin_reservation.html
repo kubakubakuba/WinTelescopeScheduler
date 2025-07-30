@@ -1,0 +1,77 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container-fluid mt-4">
+    <div class="row justify-content-center">
+        <div class="col-lg-8">
+            <div class="card bg-dark border-secondary">
+                <div class="card-header bg-secondary">
+                    <h4 class="card-title mb-0">
+                        <i class="fas fa-calendar-plus me-2"></i>Admin - Create Custom Reservation
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.username.id }}" class="form-label text-white">User</label>
+                                {{ form.username(class="form-select bg-dark text-light border-secondary") }}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.date.id }}" class="form-label text-white">Start Date</label>
+                                {{ form.date(class="form-select bg-dark text-light border-secondary") }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.start_time.id }}" class="form-label text-white">Start Time</label>
+                                {{ form.start_time(class="form-select bg-dark text-light border-secondary") }}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.end_date.id }}" class="form-label text-white">End Date</label>
+                                {{ form.end_date(class="form-select bg-dark text-light border-secondary") }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label for="{{ form.end_time.id }}" class="form-label text-white">End Time</label>
+                                {{ form.end_time(class="form-select bg-dark text-light border-secondary") }}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="{{ form.purpose.id }}" class="form-label text-white">Purpose</label>
+                            {{ form.purpose(class="form-control bg-dark text-light border-secondary", rows="3") }}
+                        </div>
+                        
+                        <div class="d-grid">
+                            {{ form.submit(class="btn btn-success btn-lg") }}
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <div class="card bg-dark border-secondary mt-4">
+                <div class="card-header bg-secondary">
+                    <h5 class="card-title mb-0">
+                        <i class="fas fa-info-circle me-2"></i>Instructions
+                    </h5>
+                </div>
+                <div class="card-body">
+                    <ul class="text-light">
+                        <li>Select the user who will use the telescope</li>
+                        <li>Choose start and end dates (can span multiple days)</li>
+                        <li>Select specific start and end times</li>
+                        <li>The system will check for overlaps with existing reservations</li>
+                        <li>Regular users can only make standard slot reservations</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

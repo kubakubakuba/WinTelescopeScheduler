@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}Telescope Scheduler - Make Reservation{% endblock %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card bg-secondary">
+                <div class="card-header">
+                    <h3 class="text-center">Make a Reservation</h3>
+                </div>
+                <div class="card-body">
+                    {% with messages = get_flashed_messages(with_categories=true) %}
+                        {% if messages %}
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ 'danger' if category == 'error' else category }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    {% endwith %}
+                    
+                    <div class="alert alert-info">
+                        <strong>Reservation Time:</strong> {{ slot_info }}
+                    </div>
+                    
+                    <form method="POST">
+                        {{ form.hidden_tag() }}
+                        <div class="mb-3">
+                            <label for="date" class="form-label">Date</label>
+                            {{ form.date(class="form-select") }}
+                        </div>
+                        <div class="mb-3">
+                            <label for="purpose" class="form-label">Purpose</label>
+                            {{ form.purpose(class="form-control", rows="3") }}
+                        </div>
+                        <div class="d-grid">
+                            {{ form.submit(class="btn btn-primary") }}
+                        </div>
+                    </form>
+                    <div class="text-center mt-3">
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-outline-light">Back to Dashboard</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

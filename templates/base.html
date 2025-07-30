@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<!--<link rel="icon" href="{{ url_for('static', filename='img/Astronomicka_expedice_boxed_black.jpg') }}" type="image/x-icon">-->
+	<title>{% block title %}{% endblock title %}</title>
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='lib/bootstrap.min.css') }}">
+	<link rel="stylesheet" href="{{ url_for('static', filename='lib/pygments-dark.css') }}">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+	<script src="{{ url_for('static', filename='lib/tex-mml-chtml.js') }}"></script>
+		
+	<style>
+		body {
+		  display: flex;
+		  flex-direction: column;
+		  min-height: 100vh;
+		}
+		.footer {
+		  margin-top: auto;
+		}
+	  </style>
+</head>
+<body>
+	<!-- <div class="logo-bar py-3" style="background-color: #1E201E;">
+		<div class="container" style="margin-left:1%!important;">
+			<div class="row">
+				<div class="col-sm-8 d-flex align-items-center">
+					<a href="https://astronomickaexpedice.cz" target="_blank" style="text-decoration: none;"><img src="{{ url_for('static', filename='img/Astronomicka_expedice_expanded_white.png') }}" alt="Expa logo" style="max-width: 100%; max-height: 10vh;" class="mr-5"></a>
+					<a href="https://astronomickaexpedice.cz" target="_blank" style="text-decoration: none;"><h1 style="color: white; font-size: 2em; padding-left: 20px;">Astrophoto<br>WebStack</h1></a>
+				</div>
+			</div>
+		</div>
+	</div> -->
+
+	<header class="bg-dark text-light">
+		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+			<div class="container-fluid">
+				<a class="navbar-brand" href="/">Telescope Scheduler</a>
+				<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+					<span class="navbar-toggler-icon"></span>
+				</button>
+				<div class="collapse navbar-collapse" id="navbarNav">
+					<ul class="navbar-nav me-auto">
+						<li class="nav-item">
+							<a class="nav-link" href="/">Home</a>
+						</li>
+						{% if current_user.is_authenticated %}
+						<li class="nav-item">
+							<a class="nav-link" href="/dashboard">Dashboard</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="/reservations">My Reservations</a>
+						</li>
+						<li class="nav-item">
+							<a class="nav-link" href="/make-reservation">Make Reservation</a>
+						</li>
+						{% endif %}
+					</ul>
+					<ul class="navbar-nav">
+						{% if current_user.is_authenticated %}
+							<li class="nav-item">
+								<a class="nav-link" href="/change-password">Change Password</a>
+							</li>
+							{% if current_user.is_admin %}
+							<li class="nav-item">
+								<a class="nav-link" href="/create-user">Create User</a>
+							</li>
+							<li class="nav-item">
+								<a class="nav-link" href="/admin-reservation">Admin Reservation</a>
+							</li>
+							{% endif %}
+							<li class="nav-item">
+								<a class="nav-link" href="/logout">Logout</a>
+							</li>
+						{% else %}
+							<li class="nav-item">
+								<a class="nav-link" href="/login">Login</a>
+							</li>
+						{% endif %}
+					</ul>
+				</div>
+			</div>
+		</nav>
+	</header>
+
+	<main class="main-content text-light">
+		{% block content %}{% endblock content %}
+	</main>
+
+	<footer class="footer py-3 bg-dark text-light">
+		<div class="container">
+			<div class="row justify-content-around">
+				<div class="col-sm-4 d-flex flex-column justify-content-center align-items-center">
+					<a href="https://swpelc.eu" style="text-decoration: none;"><p class="text-light">&copy; 2024-2025 Telescope Scheduler</p></a>
+				</div>
+				<div class="col-sm-4 text-center">
+					<a class="gh-button" href="https://github.com/kubakubakuba/WinTelescopeScheduler"><div class="gh-button__icon"></div>TelescopeScheduler</a>
+				</div>
+			</div>
+		</div>
+	</footer>
+	<script src="{{ url_for('static', filename='lib/bootstrap.bundle.min.js') }}"></script>
+</body>
+</html>

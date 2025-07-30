@@ -1,0 +1,30 @@
+[[reservations]]
+id = 1
+username = "test2"
+date = "2025-08-02"
+start_time = "15:00"
+end_time = "12:00"
+end_date = "2025-08-03"
+purpose = "NGC 7000"
+created_at = "2025-07-30T20:41:02.473320"
+
+[[reservations]]
+id = 2
+username = "test2"
+date = "2025-08-03"
+start_time = "15:00"
+end_time = "12:00"
+end_date = "2025-08-04"
+purpose = "adasdasd"
+created_at = "2025-07-30T20:41:27.949954"
+
+[[reservations]]
+id = 3
+username = "test"
+date = "2025-07-30"
+start_time = "15:00"
+end_time = "12:00"
+end_date = "2025-07-31"
+purpose = "testiing"
+created_at = "2025-07-30T20:46:29.603229"
+
